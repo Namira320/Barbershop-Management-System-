@@ -1,0 +1,237 @@
+#include <stdio.h>
+#include <string.h>
+
+// Hardcoded data login admin dan kasir
+#define USERNAME_ADMIN "ADMIN"
+#define PASSWORD_ADMIN "ADMIN123"
+#define USERNAME_CASHIER "CASHIER"
+#define PASSWORD_CASHIER "CASHIER123"
+
+// Data layanan dalam Barbershop (hardcoded)
+struct Layanan {
+    char nama[50];
+    int Harga;
+};
+
+// Inisialisasi Layanan
+struct Layanan layananBarbershop[100];
+int jumlahLayanan = 5;
+
+// Fungsi login
+int login(char *usernameInput, char *passwordInput, const char *usernameExpected, const char *passwordExpected) {
+    if (strcmp(usernameInput, usernameExpected) == 0 && strcmp(passwordInput, passwordExpected) == 0) {
+        printf("Login berhasil!\n");
+        return 1;
+    } else {
+        printf("Login gagal, username atau password salah.\n");
+        return 0;
+    }
+}
+
+// Fungsi untuk melihat data layanan
+void lihatDataLayanan() {
+    printf("\nData Layanan di Barbershop:\n");
+    for (int i = 0; i < jumlahLayanan; i++) {
+        printf("%d. Nama Layanan: %s, Harga: %d\n", i + 1, layananBarbershop[i].nama, layananBarbershop[i].Harga);
+    }
+}
+
+// Fungsi untuk input data layanan baru
+void inputDataLayanan() {
+    printf("Masukkan nama layanan baru: ");
+    scanf(" %[^\n]", layananBarbershop[jumlahLayanan].nama);
+    printf("Masukkan harga layanan: ");
+    scanf("%d", &layananBarbershop[jumlahLayanan].Harga);
+    jumlahLayanan++;
+    printf("Layanan baru berhasil ditambahkan!\n");
+}
+
+// Fungsi untuk mengedit data layanan
+void editDataLayanan() {
+    int index;
+    lihatDataLayanan();
+    printf("Masukkan nomor layanan yang ingin diedit: ");
+    scanf("%d", &index);
+    if (index >= 1 && index <= jumlahLayanan) {
+        index--;
+        printf("Masukkan nama layanan baru: ");
+        scanf(" %[^\n]", layananBarbershop[index].nama);
+        printf("Masukkan harga layanan baru: ");
+        scanf("%d", &layananBarbershop[index].Harga);
+        printf("Layanan berhasil diperbarui!\n");
+    } else {
+        printf("Nomor layanan tidak valid.\n");
+    }
+}
+
+// Fungsi untuk menghapus data layanan
+void hapusDataLayanan() {
+    int index;
+    lihatDataLayanan();
+    printf("Masukkan nomor layanan yang ingin dihapus: ");
+    scanf("%d", &index);
+    if (index >= 1 && index <= jumlahLayanan) {
+        index--;
+        for (int i = index; i < jumlahLayanan - 1; i++) {
+            layananBarbershop[i] = layananBarbershop[i + 1];
+        }
+        jumlahLayanan--;
+        printf("Layanan berhasil dihapus!\n");
+    } else {
+        printf("Nomor layanan tidak valid.\n");
+    }
+}
+
+// Fungsi untuk mencari data layanan
+void cariDataLayanan() {
+    char keyword[50];
+    printf("Masukkan nama layanan yang ingin dicari: ");
+    scanf(" %[^\n]", keyword);
+
+    printf("Hasil pencarian:\n");
+    for (int i = 0; i < jumlahLayanan; i++) {
+        if (strstr(layananBarbershop[i].nama, keyword) != NULL) {
+            printf("%d. Nama Layanan: %s, Harga: %d\n", i + 1, layananBarbershop[i].nama, layananBarbershop[i].Harga);
+        }
+    }
+}
+
+// Fungsi menu kasir
+void menuCashier() {
+    int pilihan, tambah, total = 0, bayar, kurang;
+    char tambahLayanan;
+
+    printf("=== Kasir Barbershop ===\n");
+    do {
+        lihatDataLayanan();
+        printf("Masukkan pilihan layanan (1-%d): ", jumlahLayanan);
+        scanf("%d", &pilihan);
+
+        if (pilihan >= 1 && pilihan <= jumlahLayanan) {
+            total += layananBarbershop[pilihan - 1].Harga;
+        } else {
+            printf("Pilihan tidak valid.\n");
+            continue;
+        }
+
+        printf("Apakah ingin menambah layanan lain? (y/n): ");
+        scanf(" %c", &tambahLayanan);
+    } while (tambahLayanan == 'y' || tambahLayanan == 'Y');
+
+    printf("Total yang harus dibayar: Rp %d\n", total);
+    // Loop untuk memastikan pembayaran sesuai atau lebih dari total
+    do {
+        printf("Masukkan jumlah uang yang dibayarkan: Rp ");
+        scanf("%d", &bayar);
+
+        if (bayar < total) {
+            kurang = total - bayar;
+            printf("Uang Anda kurang sebesar Rp %d. ", kurang);
+        } else {
+            int kembalian = bayar - total;
+            printf("Kembalian Anda: Rp %d\n", kembalian);
+            printf("Terima kasih telah menggunakan layanan kami!\n");
+        }
+    } while (bayar < total);
+}
+
+// Fungsi menu admin
+void menuAdmin() {
+    int pilihan;
+    while (1) {
+        printf("\nSub Menu Admin:\n");
+        printf("1. Input Data Layanan\n");
+        printf("2. Edit Data Layanan\n");
+        printf("3. Hapus Data Layanan\n");
+        printf("4. Cari Data Layanan\n");
+        printf("5. Lihat Data Layanan\n");
+        printf("6. Kembali ke Menu Utama\n");
+        printf("Masukkan pilihan Anda: ");
+        scanf("%d", &pilihan);
+
+        switch (pilihan) {
+            case 1:
+                inputDataLayanan();
+                break;
+            case 2:
+                editDataLayanan();
+                break;
+            case 3:
+                hapusDataLayanan();
+                break;
+            case 4:
+                cariDataLayanan();
+                break;
+            case 5:
+                lihatDataLayanan();
+                break;
+            case 6:
+                return;
+            default:
+                printf("Pilihan tidak valid.\n");
+        }
+    }
+}
+
+// Fungsi menu utama
+void menuUtama() {
+    int pilihan;
+    char username[50], password[50];
+    while (1) {
+        printf("\nMenu Utama:\n");
+        printf("1. Kasir\n");
+        printf("2. Admin\n");
+        printf("3. Keluar\n");
+        printf("Masukkan pilihan Anda: ");
+        scanf("%d", &pilihan);
+
+        switch (pilihan) {
+            case 1:
+                printf("Masukkan username: ");
+                scanf("%s", username);
+                printf("Masukkan password: ");
+                scanf("%s", password);
+
+                if (login(username, password, USERNAME_CASHIER, PASSWORD_CASHIER)) {
+                    menuCashier();
+                }
+                break;
+            case 2:
+                printf("Masukkan username: ");
+                scanf("%s", username);
+                printf("Masukkan password: ");
+                scanf("%s", password);
+
+                if (login(username, password, USERNAME_ADMIN, PASSWORD_ADMIN)) {
+                    menuAdmin();
+                }
+                break;
+            case 3:
+                printf("Terima kasih, program selesai.\n");
+                return;
+            default:
+                printf("Pilihan tidak valid, coba lagi.\n");
+        }
+    }
+}
+
+int main() {
+    // Inisialisasi layanan default
+    strcpy(layananBarbershop[0].nama, "Cukur Rambut");
+    layananBarbershop[0].Harga = 50000;
+
+    strcpy(layananBarbershop[1].nama, "Potong Jenggot");
+    layananBarbershop[1].Harga = 30000;
+
+    strcpy(layananBarbershop[2].nama, "Cuci Rambut");
+    layananBarbershop[2].Harga = 20000;
+
+    strcpy(layananBarbershop[3].nama, "Pijat Kepala");
+    layananBarbershop[3].Harga = 70000;
+
+    strcpy(layananBarbershop[4].nama, "Kerat Rambut");
+    layananBarbershop[4].Harga = 80000;
+
+    menuUtama();
+    return 0;
+}
