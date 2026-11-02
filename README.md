@@ -20,7 +20,7 @@ This project implements a structured **C-programming solution** to streamline da
 ## 🛠️ System Specifications
 
 * **Language:** C 
-* **Development Environment:**Visual Studio Code**
+* **Development Environment:** Visual Studio Code
 * **Core Data Structures:** Structs, Arrays, Control Flow (**Loops, Switch-Cases**), Functions, and String Manipulation (`string.h`).
 
 ---
